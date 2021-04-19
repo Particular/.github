@@ -1,0 +1,5 @@
+{
+  "name": "Particular Virus Scan Workflow",
+  "description": "A workflow template to scan published releases for viruses.",
+  "iconName": "particular"
+}
