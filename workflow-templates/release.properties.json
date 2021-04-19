@@ -1,0 +1,5 @@
+{
+  "name": "Particular Release Workflow",
+  "description": "A workflow template to build a package, sign it, and push it to Octopus Deploy.",
+  "iconName": "particular"
+}
