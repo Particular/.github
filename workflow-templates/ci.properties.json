@@ -1,0 +1,5 @@
+{
+  "name": "Particular CI Workflow",
+  "description": "A CI workflow template to build and test a package.",
+  "iconName": "particular"
+}
