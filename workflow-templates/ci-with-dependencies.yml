@@ -63,12 +63,14 @@ jobs:
       #   uses: azure/login@v1.3.0
       #   with:
       #     creds: ${{ secrets.AZURE_ACI_CREDENTIALS }}
-      - name: Setup Infrustructure # This name can be changed to be more specific.
-        id: setup-infrustructure # This name can be changed to be more specific. This name is used when referencing output parameters.
+      - name: Setup Infrastructure
+        id: setup-infrastructure
         shell: pwsh
         run:
-        # Provide a PowerShell script that will initialize dependent infrustructure. 
-        # It is advisable to check for error conditions and ensure that the dependent infrustrucure is available and running before moving to the next step.
+        # Provide a PowerShell script that will initialize dependent infrastructure. 
+
+        # Check for error conditions and ensure that the dependent infrastructure is available and running before moving to the next step.
+
         # Output parameters can be set for future steps to use by using the echo ::set-output name=key::value command.  
       - name: Run Windows tests
         if: matrix.name == 'Windows'
@@ -80,9 +82,11 @@ jobs:
         run: |
           dotnet test src --configuration Release --no-build --framework netcoreapp3.1 --logger "GitHubActions;report-warnings=false"
           dotnet test src --configuration Release --no-build --framework net5.0 --logger "GitHubActions;report-warnings=false"
-      - name: Teardown Infrustructure
+      - name: Teardown Infrastructure
+
         if: ${{ always() }}
         shell: pwsh
         run: 
-        # Provide a PowerShell script that will shutdown/clean up any dependent infustrucutre that has been setup.
-        # Any output parameters specified in the setup stage can be accessed by using {{steps.setup-infrustrucutre.outputs.key}}         
+        # Provide a PowerShell script that will shutdown/clean up any dependent infrastructure that has been set up.
+
+        # Any output parameters specified in the setup stage can be accessed by using {{steps.setup-infrastructure.outputs.key}}         
