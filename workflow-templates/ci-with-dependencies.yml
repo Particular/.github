@@ -1,0 +1,88 @@
+name: CI
+on:
+  push:
+    branches:
+      - $default-branch
+      - release-*
+  pull_request:      
+  workflow_dispatch:
+env:
+  DOTNET_NOLOGO: true
+jobs:
+  build:
+    if:
+      (github.event_name == 'pull_request_target' && github.event.pull_request.user.login == 'dependabot[bot]') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]') ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-2019
+            name: Windows
+          - os: ubuntu-20.04
+            name: Linux
+      fail-fast: false
+    steps:
+      - name: Check for secrets
+        env:
+          SECRETS_AVAILABLE: ${{ secrets.SECRETS_AVAILABLE }}
+        shell: pwsh
+        run: exit $(If ($env:SECRETS_AVAILABLE -eq 'true') { 0 } Else { 1 })
+      - name: Checkout
+        if: github.event_name != 'pull_request_target'
+        uses: actions/checkout@v2.3.4
+        with:
+          fetch-depth: 0
+      - name: Checkout for Dependabot
+        if: github.event_name == 'pull_request_target'
+        uses: actions/checkout@v2.3.4
+        with:
+          ref: "refs/pull/${{ github.event.number }}/merge"
+          fetch-depth: 0
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: 5.0.x
+      - name: Setup .NET Core 3.1 runtime
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: 3.1.x
+      - name: Build
+        run: dotnet build src --configuration Release
+      - name: Upload packages
+        if: matrix.name == 'Windows'
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: NuGet packages
+          path: nugets/
+          retention-days: 7
+      # Uncomment below to use Azure CLI commands that require credentials.    
+      # - name: Azure login
+      #   uses: azure/login@v1.3.0
+      #   with:
+      #     creds: ${{ secrets.AZURE_ACI_CREDENTIALS }}
+      - name: Setup Infrustructure # This name can be changed to be more specific.
+        id: setup-infrustructure # This name can be changed to be more specific. This name is used when referencing output parameters.
+        shell: pwsh
+        run:
+        # Provide a PowerShell script that will initialize dependent infrustructure. 
+        # It is advisable to check for error conditions and ensure that the dependent infrustrucure is available and running before moving to the next step.
+        # Output parameters can be set for future steps to use by using the echo ::set-output name=key::value command.  
+      - name: Run Windows tests
+        if: matrix.name == 'Windows'
+        # -m:1 parameter prevents test projects from being run in parallel.
+        run: dotnet test src --configuration Release --no-build --logger "GitHubActions;report-warnings=false" -m:1
+      - name: Run Linux tests
+        if: matrix.name == 'Linux'
+        # -m:1 parameter prevents test projects from being run in parallel.
+        run: |
+          dotnet test src --configuration Release --no-build --framework netcoreapp3.1 --logger "GitHubActions;report-warnings=false"
+          dotnet test src --configuration Release --no-build --framework net5.0 --logger "GitHubActions;report-warnings=false"
+      - name: Teardown Infrustructure
+        if: ${{ always() }}
+        shell: pwsh
+        run: 
+        # Provide a PowerShell script that will shutdown/clean up any dependent infustrucutre that has been setup.
+        # Any output parameters specified in the setup stage can be accessed by using {{steps.setup-infrustrucutre.outputs.key}}         
