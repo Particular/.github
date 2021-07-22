@@ -1,0 +1,5 @@
+{
+  "name": "Particular CI workflow with dependency support",
+  "description": "A CI workflow template to build and test packages that have infrastructure dependencies. This template is necessary if the build/test pipeline requires use of secrets such as Azure or AWS credentials.",
+  "iconName": "particular"
+}
