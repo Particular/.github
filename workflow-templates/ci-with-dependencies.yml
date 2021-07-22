@@ -62,7 +62,7 @@ jobs:
         uses: azure/login@v1.3.0
         with:
           creds: ${{ secrets.AZURE_ACI_CREDENTIALS }}
-      - name: Setup Infrastructure
+      - name: Setup infrastructure
         id: setup-infrastructure
         shell: pwsh
         run:
