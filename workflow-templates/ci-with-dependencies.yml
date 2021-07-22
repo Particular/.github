@@ -85,7 +85,6 @@ jobs:
           dotnet test src --configuration Release --no-build --framework netcoreapp3.1 --logger "GitHubActions;report-warnings=false"
           dotnet test src --configuration Release --no-build --framework net5.0 --logger "GitHubActions;report-warnings=false"
       - name: Teardown infrastructure
-
         if: ${{ always() }}
         shell: pwsh
         run: |
