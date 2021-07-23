@@ -1,3 +1,4 @@
+# Rename this file to ci.yml while the template is being added.
 name: CI
 on:
   push:
