@@ -44,7 +44,9 @@ jobs:
           retention-days: 7
       - name: Run Windows tests
         if: matrix.name == 'Windows'
-        run: dotnet test src --configuration Release --no-build --logger "GitHubActions;report-warnings=false"
+        # -m:1 parameter prevents test projects from being run in parallel.
+        run: dotnet test src --configuration Release --no-build --logger "GitHubActions;report-warnings=false" -m:1
       - name: Run Linux tests
         if: matrix.name == 'Linux'
-        run: dotnet test src --configuration Release --no-build --framework netcoreapp3.1 --logger "GitHubActions;report-warnings=false"
+        # -m:1 parameter prevents test projects from being run in parallel.
+        run: dotnet test src --configuration Release --no-build --framework netcoreapp3.1 --logger "GitHubActions;report-warnings=false" -m:1
