@@ -74,7 +74,6 @@ jobs:
           # Provide a PowerShell script that will initialize dependent infrastructure. Use the GitHubActions-RG resource group for all resources.
           # Check for error conditions and ensure that the dependent infrastructure is available and running before moving to the next step.
           # Output parameters can be set for future steps to use by using the echo ::set-output name=key::value command.
-
       - name: Run tests
         uses: Particular/run-tests-action@v1.0.0
       - name: Teardown infrastructure
